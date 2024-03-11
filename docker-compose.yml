@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    env_file:
+      - .env.dev
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 5s
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    env_file:
+      - .env.dev
+    ports:
+      - ${PGADMIN_PORT}:80
+    user: root
+    entrypoint: /bin/sh -c "chmod 600 /pgpass; /entrypoint.sh;"
+    configs:
+      - source: serversjson
+        target: /pgadmin4/servers.json
+      - source: pgpasss
+        target: /pgpass
+
+  migration:
+    build: 
+      context: .
+      target: migration
+    env_file:
+      - .env.dev
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build: 
+      context: .
+      target: server
+    env_file:
+      - .env.dev
+    ports:
+      - 3000:3000
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+
+configs:
+  pgpasss:
+    content: db:${POSTGRES_PORT}:*:${POSTGRES_USER}:${POSTGRES_PASSWORD}
+  serversjson:
+    content: |
+      {"Servers": {"1": {
+        "Group": "Servers",
+        "Name": "My Local Postgres 16.1",
+        "Host": "db",
+        "Port": ${POSTGRES_PORT},
+        "MaintenanceDB": "postgres",
+        "Username": "${POSTGRES_USER}",
+        "PassFile": "/pgpass",
+        "SSLMode": "prefer"
+      }}}
