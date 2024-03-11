@@ -32,8 +32,6 @@ export class AuthGuard implements CanActivate {
     try {
       const payload = await this.jwtService.verifyAsync<ISignedUser>(token);
       request['user'] = payload;
-      console.log(payload.roles);
-      console.log(requiredRole);
       if (
         !payload.roles.includes(requiredRole) &&
         !payload.roles.includes('Admin')
