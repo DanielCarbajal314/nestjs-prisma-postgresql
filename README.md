@@ -10,6 +10,13 @@ This is a nestjs example application that uses postgresql with Prisma ORM to per
 
 - **prisma migration** : Defined in the Dockerfile, with target **migration**. This runs prisma CLI command to run all the migrations, when this container exits, api service container will start. It waits for Database container healthcheck to pass in order to be executed. 
 
+## Remarks
+- Unit Test:
+    Example on how to unit test controller by injecting mocked dependencies [here](https://github.com/DanielCarbajal314/nestjs-prisma-postgresql/blob/54d19974d3bb57237b000d7b81458549c8d6b2a3/src/controllers/user.controller.spec.ts#L21)
+
+- Inline Documentation:
+    Example on how to document interfaces to help as inline documentation for other developers: [here](https://github.com/DanielCarbajal314/nestjs-prisma-postgresql/blob/54d19974d3bb57237b000d7b81458549c8d6b2a3/src/persistancy/repositories/interfaces/IUserRepository.ts#L13)
+
 ## Running the app
 
 Theres a make file to start all the services of this application
