@@ -13,7 +13,11 @@ import { JWTSecret } from './config';
 import { WinstonModule, utilities } from 'nest-winston';
 import { transports, format } from 'winston';
 import { LoanApplicationController } from './controllers/loanApplication.controller';
-import { LoanApplicationRepository } from './persistancy';
+import {
+  ILoanApplicationRepository,
+  IUserRepository,
+  LoanApplicationRepository,
+} from './persistancy';
 import { LoanApplicationService } from './services/loanApplication.service';
 
 const messageFormat = utilities.format.nestLike('App', {
@@ -39,10 +43,16 @@ const messageFormat = utilities.format.nestLike('App', {
   controllers: [AppController, UserController, LoanApplicationController],
   providers: [
     AppService,
+    {
+      provide: IUserRepository,
+      useClass: UserRepository,
+    },
+    {
+      provide: ILoanApplicationRepository,
+      useClass: LoanApplicationRepository,
+    },
     UserService,
-    UserRepository,
     PrismaService,
-    LoanApplicationRepository,
     LoanApplicationService,
     {
       provide: APP_FILTER,

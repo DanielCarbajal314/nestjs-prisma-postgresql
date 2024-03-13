@@ -24,3 +24,5 @@ export interface ILoanApplicationRepository {
   ): Promise<ILoanApplicationWithId>;
   getAll(): Promise<ILoanApplicationWithId[]>;
 }
+
+export const ILoanApplicationRepository = Symbol('ILoanApplicationRepository');

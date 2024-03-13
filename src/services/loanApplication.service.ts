@@ -1,16 +1,15 @@
-import { NotFoundException, Injectable, Scope } from '@nestjs/common';
+import { NotFoundException, Injectable, Scope, Inject } from '@nestjs/common';
 import { CreateLoanApplicationDto } from 'src/models/CreateLoanApplications';
 import {
   ILoanApplicationWithId,
-  LoanApplicationRepository,
+  ILoanApplicationRepository,
 } from 'src/persistancy';
 import { BaseAuthenticatedService } from './baseAuthenticated.service';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoanApplicationService extends BaseAuthenticatedService {
-  constructor(private userRepository: LoanApplicationRepository) {
-    super();
-  }
+  @Inject(ILoanApplicationRepository)
+  private readonly userRepository: ILoanApplicationRepository;
 
   async getById(id: number): Promise<ILoanApplicationWithId> {
     const loan = await this.userRepository.getById(id);

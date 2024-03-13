@@ -1,19 +1,18 @@
-import { UnauthorizedException, Injectable } from '@nestjs/common';
-import { CreateUserDto } from 'src/models/CreateUser.dto';
-import { UserRepository } from 'src/persistancy';
+import { UnauthorizedException, Injectable, Inject } from '@nestjs/common';
+import { IUserRepository } from '../persistancy';
 import { createHash } from 'crypto';
-import { LoginDto } from 'src/models/Login.dto';
+import { LoginDto, CreateUserDto, UserLoginResponseDto } from '../models';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { ISignedUser } from 'src/shared/ISignedUset';
-import { UserLoginResponseDto } from 'src/models/UserLoginResponse.dto';
+import { ISignedUser } from '../shared/ISignedUset';
 
 @Injectable()
 export class UserService {
+  @Inject(IUserRepository)
+  private readonly userRepository: IUserRepository;
   private salt: string;
 
   constructor(
-    private userRepository: UserRepository,
     private configService: ConfigService,
     private jwtService: JwtService,
   ) {
